@@ -1,0 +1,954 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --lime: #CCFF00;
+    --lime-dim: #A8D400;
+    --lime-glow: rgba(204,255,0,0.15);
+    --lime-faint: rgba(204,255,0,0.07);
+    --black: #050505;
+    --black2: #0D0D0D;
+    --black3: #111111;
+    --black4: #1A1A1A;
+    --black5: #222222;
+    --gray: #888;
+    --gray2: #555;
+    --white: #F5F5F0;
+    --radius: 4px;
+  }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Space Grotesk', sans-serif;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+
+  /* HERO */
+  .hero {
+    background: var(--black);
+    border-bottom: 1px solid var(--black5);
+    padding: 48px 40px 36px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 300px; height: 300px;
+    background: var(--lime-faint);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .hero-tag {
+    display: inline-block;
+    background: var(--lime);
+    color: var(--black);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    padding: 4px 10px;
+    border-radius: 2px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(48px, 8vw, 88px);
+    line-height: 0.92;
+    letter-spacing: 2px;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+  .hero h1 span { color: var(--lime); }
+  .hero-sub {
+    font-size: 14px;
+    color: var(--gray);
+    font-weight: 300;
+    letter-spacing: 0.5px;
+    margin-bottom: 28px;
+    max-width: 480px;
+  }
+  .hero-stats {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .hero-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .hero-stat-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    color: var(--lime);
+    line-height: 1;
+  }
+  .hero-stat-lbl {
+    font-size: 10px;
+    color: var(--gray2);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-family: 'DM Mono', monospace;
+  }
+  .hero-price {
+    position: absolute;
+    top: 40px;
+    right: 40px;
+    text-align: right;
+  }
+  .price-was {
+    font-size: 12px;
+    color: var(--gray2);
+    text-decoration: line-through;
+    font-family: 'DM Mono', monospace;
+  }
+  .price-now {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px;
+    color: var(--lime);
+    line-height: 1;
+  }
+  .price-label {
+    font-size: 10px;
+    color: var(--gray2);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* NAV */
+  .nav-strip {
+    background: var(--black2);
+    border-bottom: 1px solid var(--black5);
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: none;
+    gap: 0;
+  }
+  .nav-strip::-webkit-scrollbar { display: none; }
+  .nav-btn {
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--gray);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 12px 20px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color 0.2s, border-color 0.2s;
+    flex-shrink: 0;
+  }
+  .nav-btn:hover { color: var(--white); }
+  .nav-btn.active { color: var(--lime); border-bottom-color: var(--lime); }
+
+  /* SECTIONS */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* MODULES GRID */
+  .modules-wrap { padding: 32px 40px; }
+  .modules-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    letter-spacing: 1px;
+    color: var(--white);
+  }
+  .section-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--gray2);
+  }
+  .modules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2px;
+  }
+  .mod-card {
+    background: var(--black2);
+    border: 1px solid var(--black5);
+    padding: 20px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+  .mod-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--black5);
+    transition: background 0.15s;
+  }
+  .mod-card:hover {
+    background: var(--black3);
+    border-color: var(--gray2);
+  }
+  .mod-card:hover::before { background: var(--lime); }
+  .mod-card.expanded {
+    background: var(--black3);
+    border-color: var(--lime);
+  }
+  .mod-card.expanded::before { background: var(--lime); }
+  .mod-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--gray2);
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .mod-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--white);
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+  .mod-desc {
+    font-size: 12px;
+    color: var(--gray);
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+  .mod-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .mod-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.5px;
+    padding: 2px 7px;
+    border-radius: 2px;
+    border: 1px solid var(--black5);
+    color: var(--gray2);
+  }
+  .mod-tag.lime {
+    border-color: rgba(204,255,0,0.3);
+    color: var(--lime-dim);
+    background: var(--lime-faint);
+  }
+  .mod-expand {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--black5);
+    display: none;
+  }
+  .mod-card.expanded .mod-expand { display: block; }
+  .expand-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--black4);
+    font-size: 12px;
+    color: var(--gray);
+  }
+  .expand-item:last-child { border-bottom: none; }
+  .expand-dot {
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--lime);
+    flex-shrink: 0;
+    margin-top: 5px;
+  }
+  .expand-item strong { color: var(--white); font-weight: 500; }
+
+  /* INCOME SECTION */
+  .income-wrap { padding: 32px 40px; }
+  .models-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 2px;
+    margin-bottom: 40px;
+  }
+  .income-card {
+    background: var(--black2);
+    border: 1px solid var(--black5);
+    padding: 24px 20px;
+    position: relative;
+  }
+  .income-icon {
+    font-size: 24px;
+    margin-bottom: 12px;
+    display: block;
+  }
+  .income-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--white);
+    margin-bottom: 6px;
+  }
+  .income-range {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    color: var(--lime);
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    line-height: 1;
+  }
+  .income-note {
+    font-size: 11px;
+    color: var(--gray2);
+    line-height: 1.5;
+  }
+  .income-card.featured {
+    border-color: rgba(204,255,0,0.35);
+    background: var(--lime-faint);
+  }
+  .income-card.featured .income-name { color: var(--lime); }
+  .timeline-section {
+    margin-top: 8px;
+  }
+  .tl-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 1px;
+    color: var(--white);
+    margin-bottom: 20px;
+  }
+  .tl-track {
+    display: flex;
+    gap: 0;
+    position: relative;
+  }
+  .tl-track::before {
+    content: '';
+    position: absolute;
+    left: 0; right: 0;
+    top: 16px;
+    height: 1px;
+    background: var(--black5);
+  }
+  .tl-item {
+    flex: 1;
+    position: relative;
+    padding-top: 32px;
+    padding-right: 12px;
+  }
+  .tl-dot {
+    position: absolute;
+    top: 10px; left: 0;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--black5);
+    border: 2px solid var(--gray2);
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .tl-item.active .tl-dot {
+    background: var(--lime);
+    border-color: var(--lime);
+  }
+  .tl-month {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--gray2);
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+  }
+  .tl-event {
+    font-size: 11px;
+    color: var(--gray);
+    line-height: 1.5;
+  }
+  .tl-item.active .tl-event { color: var(--white); }
+
+  /* TOOLKIT SECTION */
+  .toolkit-wrap { padding: 32px 40px; }
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+  }
+  .tool-group {
+    background: var(--black2);
+    border: 1px solid var(--black5);
+    padding: 20px;
+  }
+  .tool-group-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--lime-dim);
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--black5);
+  }
+  .tool-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--black4);
+    font-size: 12px;
+  }
+  .tool-item:last-child { border-bottom: none; }
+  .tool-name { color: var(--white); }
+  .tool-purpose { color: var(--gray); font-size: 11px; text-align: right; }
+  .tool-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    padding: 2px 6px;
+    border-radius: 2px;
+    letter-spacing: 0.5px;
+  }
+  .tool-badge.free { background: var(--lime-faint); color: var(--lime-dim); border: 1px solid rgba(204,255,0,0.2); }
+  .tool-badge.paid { background: rgba(80,80,80,0.2); color: var(--gray); border: 1px solid var(--black5); }
+
+  /* CHECKLIST */
+  .checklist-wrap { padding: 32px 40px; }
+  .phase-grid { display: flex; flex-direction: column; gap: 24px; }
+  .phase-block {
+    background: var(--black2);
+    border: 1px solid var(--black5);
+    padding: 0;
+    overflow: hidden;
+  }
+  .phase-header {
+    background: var(--black3);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--black5);
+  }
+  .phase-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    color: var(--lime);
+    line-height: 1;
+    min-width: 30px;
+  }
+  .phase-title-txt {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--white);
+  }
+  .phase-time {
+    margin-left: auto;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--gray2);
+    letter-spacing: 0.5px;
+  }
+  .check-list { padding: 8px 20px 12px; }
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--black4);
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .check-item:last-child { border-bottom: none; }
+  .check-box {
+    width: 14px; height: 14px;
+    border: 1.5px solid var(--gray2);
+    border-radius: 2px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .check-item.done .check-box {
+    background: var(--lime);
+    border-color: var(--lime);
+  }
+  .check-item.done .check-box::after {
+    content: '✓';
+    font-size: 9px;
+    color: var(--black);
+    font-weight: 700;
+  }
+  .check-item.done .check-label {
+    color: var(--gray2);
+    text-decoration: line-through;
+  }
+  .check-label { font-size: 12px; color: var(--gray); line-height: 1.5; }
+  .progress-bar-wrap { padding: 12px 20px; background: var(--black3); border-top: 1px solid var(--black5); }
+  .progress-bar-bg { background: var(--black5); height: 3px; border-radius: 2px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: var(--lime); border-radius: 2px; transition: width 0.3s; }
+  .progress-label { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--gray2); margin-top: 4px; }
+
+  /* FOOTER */
+  .footer {
+    background: var(--black2);
+    border-top: 1px solid var(--black5);
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .footer-brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 2px;
+    color: var(--lime);
+  }
+  .footer-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--gray2);
+    letter-spacing: 0.5px;
+  }
+  .cta-btn {
+    background: var(--lime);
+    color: var(--black);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    letter-spacing: 2px;
+    border: none;
+    padding: 10px 24px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: opacity 0.2s;
+  }
+  .cta-btn:hover { opacity: 0.85; }
+</style>
+</head>
+<body>
+
+<h2 class="sr-only">Pinterest Automation Empire — Complete Course Overview with 20 modules, income models, tools, and launch checklist</h2>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">High-Ticket Digital Product · $197</div>
+  <h1>Pinterest<br><span>Automation</span><br>Empire</h1>
+  <p class="hero-sub">Build passive traffic, affiliate income & digital product sales — from zero to automated system.</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><span class="hero-stat-val">20</span><span class="hero-stat-lbl">Modules</span></div>
+    <div class="hero-stat"><span class="hero-stat-val">6</span><span class="hero-stat-lbl">Income Streams</span></div>
+    <div class="hero-stat"><span class="hero-stat-val">150+</span><span class="hero-stat-lbl">Pin Formulas</span></div>
+    <div class="hero-stat"><span class="hero-stat-val">50+</span><span class="hero-stat-lbl">Niche Examples</span></div>
+  </div>
+  <div class="hero-price">
+    <div class="price-was">$297</div>
+    <div class="price-now">$197</div>
+    <div class="price-label">Launch Price</div>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav-strip">
+  <button class="nav-btn active" onclick="showSection('modules',this)">Modules</button>
+  <button class="nav-btn" onclick="showSection('income',this)">Income Models</button>
+  <button class="nav-btn" onclick="showSection('toolkit',this)">Toolkit</button>
+  <button class="nav-btn" onclick="showSection('checklist',this)">Launch Checklist</button>
+</div>
+
+<!-- MODULES -->
+<div class="section active" id="modules">
+  <div class="modules-wrap">
+    <div class="modules-header">
+      <span class="section-title">Course Modules</span>
+      <span class="section-count">20 Modules · Click to expand</span>
+    </div>
+    <div class="modules-grid" id="modulesGrid"></div>
+  </div>
+</div>
+
+<!-- INCOME -->
+<div class="section" id="income">
+  <div class="income-wrap">
+    <div class="modules-header"><span class="section-title">Income Models</span></div>
+    <div class="models-grid" id="incomeGrid"></div>
+    <div class="timeline-section">
+      <div class="tl-title">Realistic Growth Timeline</div>
+      <div class="tl-track" id="tlTrack"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TOOLKIT -->
+<div class="section" id="toolkit">
+  <div class="toolkit-wrap">
+    <div class="modules-header"><span class="section-title">Full Toolkit</span></div>
+    <div class="tools-grid" id="toolsGrid"></div>
+  </div>
+</div>
+
+<!-- CHECKLIST -->
+<div class="section" id="checklist">
+  <div class="checklist-wrap">
+    <div class="modules-header"><span class="section-title">Launch Checklist</span></div>
+    <div class="phase-grid" id="phaseGrid"></div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <span class="footer-brand">Pinterest Automation Empire</span>
+  <span class="footer-text">© 2025 · 20 Modules · Complete Business System</span>
+  <button class="cta-btn" onclick="sendPrompt('Build me the full Module 1 teaching script for Pinterest Automation Empire')">Generate Teaching Script ↗</button>
+</div>
+
+<script>
+const modules = [
+  { num:"01", title:"Pinterest Business Foundation", desc:"Understand Pinterest as a search engine, not social media. Learn algorithm mechanics and why Pinterest traffic outlasts Instagram by 3–5 years.", tags:["Beginner","Foundation","Mindset"], lime:["Search Engine"], items:[
+    {h:"Search Engine vs Social", b:"Pinterest indexes content permanently. A pin created today can drive traffic for years — unlike Instagram where posts die in 24–48 hours."},
+    {h:"Algorithm Mechanics", b:"Understand Smart Feed, distribution phases (fresh → engaged → archived), and how saves signal quality to Pinterest's ranking system."},
+    {h:"User Psychology", b:"Pinterest users have buyer intent. 83% of weekly users have purchased from pins. They're in research and decision mode, not scroll-kill mode."},
+    {h:"Business Models", b:"Affiliate marketing, blog traffic, digital products, email list building, CPA offers, e-commerce. Course covers all six with dedicated modules."},
+    {h:"Realistic Timelines", b:"Month 1–2: account building. Month 3–4: traffic grows. Month 5–6: monetization kicks in. Month 12+: passive income phase."}
+  ]},
+  { num:"02", title:"Account Setup — Pro Level", desc:"Build a professional Pinterest presence with SEO-optimized profiles, boards, and business account configuration from day one.", tags:["Setup","SEO","Branding"], lime:["Business Account"], items:[
+    {h:"Username Strategy", b:"Use niche keywords in your username. 'healthytips_sarah' outperforms 'sarah_official' for discoverability in search."},
+    {h:"Bio Optimization", b:"240 characters. Lead with your primary keyword, state the value you deliver, include a CTA. Example: 'Free meal plans for busy moms → link in bio'."},
+    {h:"Board Architecture", b:"Create 10–15 boards targeting different keyword clusters. Board names are indexed. 'Healthy Dinner Recipes' outranks 'My Recipes'."},
+    {h:"Rich Pins Setup", b:"Enable Rich Pins via domain verification. They auto-sync metadata from your site, boosting click-through and trust signals."},
+    {h:"Analytics Configuration", b:"Connect Pinterest Analytics + Google Analytics. Track: impressions, saves, outbound clicks, top pins. Set weekly review cadence."}
+  ]},
+  { num:"03", title:"Niche Research System", desc:"Deep-dive niche analysis: profitable vs saturated, evergreen vs trending, monetization potential, and 50+ validated niche examples with sub-niche maps.", tags:["Research","Niches","Strategy"], lime:["50+ Niches"], items:[
+    {h:"Profitable Niche Formula", b:"High search demand + buyer intent + affiliate programs + low competition = ideal niche. Use Pinterest search autocomplete as free demand data."},
+    {h:"Top Niches by RPM", b:"Personal finance ($15–40 RPM), Home decor ($8–18), Health/wellness ($10–25), Digital marketing ($20–50), Food/recipes ($5–12 RPM)."},
+    {h:"Sub-Niche System", b:"'Finance' is too broad. 'Budget meal planning for college students' is specific, rankable, and monetizable. Go 3 levels deep."},
+    {h:"Trend Research", b:"Use Pinterest Trends tool, Google Trends, and seasonal calendar. Plan seasonal content 6–8 weeks early for algorithm pickup."},
+    {h:"Competitor Analysis", b:"Study top accounts in your niche. Note: posting frequency, pin styles, board structure, which pins get most saves. Reverse-engineer success."}
+  ]},
+  { num:"04", title:"Pinterest SEO Mastery", desc:"Complete keyword system: seed → long-tail → buyer intent. Profile, board, pin, and description optimization. Exact ranking mechanics and scoring factors.", tags:["SEO","Keywords","Rankings"], lime:["Core Module"], items:[
+    {h:"Keyword Research Process", b:"Step 1: Pinterest search bar autocomplete. Step 2: 'More like this' on top pins. Step 3: Competitor board names. Build a 200-keyword master list."},
+    {h:"Keyword Placement", b:"Place primary keyword in: pin title (first 5 words), description (first sentence + twice more), board name, board description, and profile bio."},
+    {h:"Title Optimization", b:"Titles are cut at 100 chars in feed. Critical keywords in first 40 chars. Format: [Keyword] + [Benefit/Number] + [Hook]. Max information density."},
+    {h:"Ranking Factors", b:"Fresh pins → saves → comments → outbound clicks → session time on destination. Pinterest rewards content that keeps users engaged both on and off platform."},
+    {h:"Semantic SEO", b:"Pinterest understands topic clusters. A board about 'keto diet' builds topical authority that helps all pins in that board rank faster."}
+  ]},
+  { num:"05", title:"Content Strategy System", desc:"Weekly and monthly content calendars, viral pin frameworks, emotional trigger mapping, and content type breakdown by business model.", tags:["Content","Planning","Viral"], lime:[], items:[
+    {h:"Content Pillars System", b:"Build 4–5 content pillars per account. Each pillar targets a different keyword cluster and content type (educational, inspirational, product, tutorial)."},
+    {h:"Viral Pin Framework", b:"Hook + Problem + Solution + CTA. Every pin must answer: 'Why should I stop scrolling?' in 0.3 seconds. Test with 3 designs per concept."},
+    {h:"Weekly Content System", b:"Monday: educational. Wednesday: inspirational. Friday: product/promotional. Weekend: trending/seasonal. Batch create Sunday for the week ahead."},
+    {h:"Emotional Triggers", b:"Top converting emotions: curiosity ('you're doing this wrong'), aspiration ('what your home could look like'), urgency ('before winter hits'), social proof."},
+    {h:"Repurposing Framework", b:"One blog post → 5 pin angles → 3 design variations each = 15 pins from one piece of content. Maximum output from minimum input."}
+  ]},
+  { num:"06", title:"Pin Design Mastery", desc:"Mobile-first design principles, font pairing, color psychology, layout templates, and visual hierarchy rules that stop the scroll.", tags:["Design","Canva","Templates"], lime:["Templates"], items:[
+    {h:"Mobile-First Rule", b:"2:3 ratio (1000×1500px) is standard. 85% of Pinterest users are mobile. Design so text is readable at 150px wide thumbnail size."},
+    {h:"Font System", b:"Headline: bold serif or display font, 60–80pt. Subheadline: clean sans-serif, 28–36pt. Body: minimal, 18–22pt max. 3 font max per pin."},
+    {h:"Color Psychology", b:"High contrast beats pretty. Light bg + dark text = readability. Warm colors (orange, red, yellow) = higher CTR in food/lifestyle. Test 2 color versions."},
+    {h:"Layout Templates", b:"Big text left, image right. Full bleed image + text overlay. Split screen. List format. Quote card. Each has different performance by niche."},
+    {h:"CTA Design", b:"Button-style CTA in bottom 1/3 of pin. 'Save this' 'Click to learn more' 'Get the free guide'. CTA increases saves and clicks by 30–50%."}
+  ]},
+  { num:"07", title:"High CTR Pin Creation", desc:"100+ proven title formulas, 50+ hook templates, curiosity gaps, number psychology, and emotional headline frameworks with real examples.", tags:["CTR","Headlines","Hooks"], lime:["100+ Formulas"], items:[
+    {h:"Number Psychology", b:"'7 ways to' outperforms 'ways to' by 40%. Odd numbers beat even. Specific numbers beat vague: '23% more traffic' vs 'more traffic'."},
+    {h:"Curiosity Gap Formulas", b:"'The [thing] most [people] don't know about [topic]' / 'Why your [thing] isn't working (and the fix)' / 'Stop [doing X] — do this instead'."},
+    {h:"Emotional Hook Structures", b:"Fear: 'Are you making this [costly] mistake?' / Aspiration: 'What a [dream outcome] actually looks like' / Relief: 'Finally — a [solution] that works'."},
+    {h:"Power Words by Category", b:"Urgency: never, instantly, today, before. Trust: proven, exact, step-by-step. Value: free, secret, insider, hack. Combine 1–2 per headline."},
+    {h:"A/B Testing System", b:"Create 2 pin designs for every concept. Different headline, same image — or same headline, different image. Post both. Kill loser at 2 weeks. Scale winner."}
+  ]},
+  { num:"08", title:"AI Content Automation", desc:"Full AI-assisted workflow for pin titles, descriptions, image briefs, and batch content creation systems using ChatGPT and Midjourney.", tags:["AI","Automation","Scale"], lime:["Automation"], items:[
+    {h:"AI Pin Title System", b:"Prompt: 'Generate 20 Pinterest pin titles about [topic] targeting [keyword]. Format: [Number/hook] + [keyword] + [benefit]. Vary curiosity, list, and how-to formats.'"},
+    {h:"Description Automation", b:"Prompt: 'Write a 150-word Pinterest pin description for [title]. Include keywords: [k1, k2, k3]. End with a CTA. Conversational tone, not corporate.'"},
+    {h:"Image Brief System", b:"Use AI to write Canva/Midjourney image briefs. Describe style, color palette, text overlay, mood. Feed to your designer or generate with AI tools."},
+    {h:"Batch Creation Schedule", b:"Sunday: generate 30 titles + descriptions with AI (2 hrs). Monday: design 30 pins (3–4 hrs with templates). Schedule all 30 in Tailwind/Buffer. Done."},
+    {h:"Content Repurposing AI", b:"Paste your blog post → AI extracts 10 pin angles → generates titles, descriptions, image concepts for each. One post becomes 10+ pins automatically."}
+  ]},
+  { num:"09", title:"Posting & Scheduling System", desc:"Optimal posting frequency, best times by niche and timezone, fresh pin strategy, and full automation using Tailwind and Buffer.", tags:["Scheduling","Tailwind","System"], lime:[], items:[
+    {h:"Posting Frequency", b:"15–25 pins per day is optimal. Never post all at once — spread across 6-hour windows. Pinterest rewards consistent daily activity over sporadic bursts."},
+    {h:"Fresh Pin Priority", b:"Pinterest's algorithm prioritizes fresh content. Every pin should have a unique image or title — repins of the same URL hurt distribution. Always create fresh."},
+    {h:"Best Posting Times", b:"6–8 AM (pre-work browse), 12–2 PM (lunch scroll), 8–11 PM (evening planning). Test your specific audience — analytics show peak engagement windows."},
+    {h:"Tailwind Workflow", b:"Upload 30 pins → Tailwind SmartSchedule fills optimal slots automatically → set Tribes for extra reach → review analytics dashboard weekly."},
+    {h:"Consistency System", b:"Pinterest penalizes 7+ day inactivity. Set up 2-week content buffer. If you go silent, reactivation takes 2–4 weeks to return to previous reach."}
+  ]},
+  { num:"10", title:"Virality & Traffic Engineering", desc:"How saves compound traffic, CTR optimization loops, scroll-stopping techniques, and the mechanics of engineering high-performing pins.", tags:["Traffic","Viral","Growth"], lime:["Core Module"], items:[
+    {h:"Save Compound Effect", b:"Each save distributes your pin to that user's followers. A pin with 50 saves can reach 50,000+ additional users organically. Saves = free amplification."},
+    {h:"CTR Optimization Loop", b:"Week 1: publish. Week 2: check CTR in analytics. Below 0.5% = redesign headline. Below 1% = test new image. Above 2% = duplicate and scale."},
+    {h:"Scroll-Stopping Science", b:"Users scroll at 3 pins/second. You need contrast (light pin in dark feed), a readable headline, and visible value signal in the top 40% of the pin."},
+    {h:"Traffic Compounding", b:"Pinterest traffic is cumulative. Month 1: 1,000 views. Month 6: 40,000 views. Month 12: 200,000+ views. Same effort, exponentially growing results."},
+    {h:"Seasonal Traffic Spikes", b:"Plan Christmas content in October. Valentine's content in December. Pinterest users plan 2–3 months ahead. Early content captures peak search volume."}
+  ]},
+  { num:"11", title:"Affiliate Marketing Empire", desc:"High-converting affiliate funnels, direct vs bridge page strategy, top programs, compliance, and full pin-to-sale system with real examples.", tags:["Affiliate","Monetization","Funnel"], lime:["Income Module"], items:[
+    {h:"Top Affiliate Programs", b:"Amazon Associates (broad but low %). ShareASale (fashion, home). CJ Affiliate (finance). Impact (SaaS, software). Clickbank (digital products, 50–75% commission)."},
+    {h:"Funnel: Pin → Sale", b:"Option A: Pin → Bridge page (review/comparison) → Affiliate offer. Option B: Pin → Blog post → Multiple affiliate links. Bridge pages convert 2–4× better."},
+    {h:"Bridge Page Formula", b:"Headline matches pin promise. Problem statement. Solution: your recommended product. Benefits (3–5 bullets). Social proof. CTA button. 400–600 words. Done."},
+    {h:"Compliance Rules", b:"Add '#ad' or 'affiliate link' disclosure on every pin with affiliate content. Pinterest can suspend accounts for hidden affiliate promotion. Disclosure = trust."},
+    {h:"High Commission Targets", b:"SaaS tools: $50–200 per signup. Online courses: 30–50% commission ($30–150 per sale). Finance products: $100–400 per lead. Prioritize high-ticket."}
+  ]},
+  { num:"12", title:"Digital Product System", desc:"Product validation, ebook and template creation, pricing psychology, Gumroad/Payhip setup, and turning Pinterest traffic into buyers.", tags:["Digital Products","Passive","Gumroad"], lime:["Income Module"], items:[
+    {h:"Best Products for Pinterest", b:"Printables ($7–27, high volume). Templates ($17–47). Ebooks ($17–47). Mini-courses ($97–197). Lower price = less friction, more buyers, still profitable at scale."},
+    {h:"Validation Before Creation", b:"Post 10 pins about the topic. Watch which get most saves. High saves = proven demand. Build what Pinterest tells you people want — not what you assume."},
+    {h:"Product Creation Speed", b:"Ebook: Canva template, 15–20 pages, 3–5 days. Template pack: Notion/Canva, 5–10 templates, 3 days. Printable set: Canva, 10 designs, 1–2 days."},
+    {h:"Pricing Strategy", b:"Anchor with a premium version. $17 basic / $37 standard / $67 bundle. Bundle increases average order value by 40–60% with minimal extra work."},
+    {h:"Pin → Sale Funnel", b:"Pin → Free lead magnet (list building) → Email sequence (3–5 emails) → Product pitch. This warms cold Pinterest traffic and converts at 1–3%."}
+  ]},
+  { num:"13", title:"Email List Building", desc:"Lead magnet strategy, ConvertKit setup, Pin-to-optin funnels, automated email sequences, and turning your list into a recurring revenue engine.", tags:["Email","Funnels","ConvertKit"], lime:[], items:[
+    {h:"Why Email Matters", b:"Pinterest can change its algorithm. Your email list is an asset you own. 1,000 email subscribers is worth more than 10,000 Pinterest followers long-term."},
+    {h:"Lead Magnet Formula", b:"Solve one specific problem in 5 minutes. Best formats: checklist, cheatsheet, template, mini-guide. Bad format: 50-page ebook. Specific + fast = high opt-in."},
+    {h:"Pin → Opt-in System", b:"Pin headline matches freebie promise exactly. Landing page mirrors pin language. 2-field form (name + email). Confirmation email delivers freebie instantly."},
+    {h:"Email Sequence Structure", b:"Email 1: Deliver the freebie + warm intro. Email 2: Quick win tip. Email 3: Your story/credibility. Email 4: Problem agitation. Email 5: Product offer."},
+    {h:"List Monetization", b:"At 1,000 subscribers: $500–2,000/month possible. At 5,000: $3,000–10,000/month. Rule: email list generates $1–3 per subscriber per month with proper sequences."}
+  ]},
+  { num:"14", title:"Website & Blog Traffic", desc:"Pinterest-to-blog strategy, SEO stacking system, article structure for high conversion, internal linking, and long-term passive traffic architecture.", tags:["Blog","Traffic","SEO"], lime:[], items:[
+    {h:"Pinterest–Blog Stack", b:"Write a blog post → Create 5 pins for it → Pinterest drives traffic → Blog earns ad revenue + affiliate commissions. Double-dip traffic monetization."},
+    {h:"Article Structure for Pinterest", b:"Pin promises: '7 ways to save $500/month'. Article delivers all 7. Each point = affiliate link opportunity. End with email opt-in offer. Full funnel in one post."},
+    {h:"RPM Optimization", b:"Google AdSense RPM: $5–15 in most niches. Mediavine/Raptive: $15–40 RPM. Requires 25,000–50,000 monthly sessions. Pinterest is fastest path to those numbers."},
+    {h:"Internal Linking System", b:"Every blog post links to 3–5 related posts. Keeps users on site longer. Reduces bounce rate. Signals content depth to Google. Amplifies Pinterest traffic value."},
+    {h:"Long-Term Traffic Stack", b:"Pinterest pins rank → drive blog traffic → blog posts rank on Google → Google traffic drives Pinterest searches → compounding passive traffic loop."}
+  ]},
+  { num:"15", title:"Analytics & Optimization", desc:"What metrics actually matter, how to identify winning pins, systematic A/B testing, and the weekly optimization ritual that compounds results.", tags:["Analytics","Data","Optimization"], lime:[], items:[
+    {h:"5 Metrics That Matter", b:"1) Impressions (reach). 2) Saves (quality signal). 3) Outbound clicks (traffic). 4) CTR (save rate ÷ impressions). 5) Pin engagement rate. Track weekly."},
+    {h:"Identifying Winners", b:"Sort pins by outbound clicks. Top 20% of pins drive 80% of traffic. Analyze: what niche, what design style, what headline format. Replicate the pattern."},
+    {h:"Kill Threshold", b:"Pin with <0.3% CTR at 2 weeks = kill it. Pin with 0+ saves but 0 clicks = redesign. Pin with high saves + no clicks = add stronger CTA to description."},
+    {h:"Scaling Winners", b:"Top performing pin → Create 5 variations (different images, same headline) → Create 5 variations (same image, different headlines). Best variant gets maximum scheduling."},
+    {h:"Monthly Audit Ritual", b:"Monthly: delete or archive pins below 0.1% CTR. Update descriptions with new keywords. Refresh seasonal content. Verify top 10 pins still have working links."}
+  ]},
+  { num:"16", title:"Advanced Growth Strategies", desc:"Seasonal trend hijacking, multi-account architecture, authority building, group board strategy, and advanced algorithms for exponential scaling.", tags:["Advanced","Scaling","Multi-Account"], lime:["Advanced"], items:[
+    {h:"Seasonal Trend System", b:"Q4 (Oct–Dec): highest Pinterest traffic of year. Plan holiday content in August. Pinterest's own trend report releases each September — use it as your content bible."},
+    {h:"Trend Hijacking", b:"Monitor 'Pinterest Today' daily. Trending topic + your niche = viral intersection. A home decor account covering trending 'quiet luxury' aesthetic in 2023 = explosive growth."},
+    {h:"Multi-Account Strategy", b:"One account per niche. Not one account for everything. 3 accounts × 3 niches = 3× income potential. Use separate email + IP per account to avoid flagging."},
+    {h:"Authority Building", b:"Consistent niche focus builds topical authority. Pinterest's algorithm learns what your account is 'about' and distributes your new pins to proven engaged audiences first."},
+    {h:"Content Velocity Scaling", b:"Month 1–3: 10 pins/day manually. Month 4–6: 20 pins/day with AI. Month 7+: 30+ pins/day with team + automation. Revenue scales with volume."}
+  ]},
+  { num:"17", title:"Outsourcing & Scaling", desc:"Full hiring system, SOPs for pin creation and scheduling, VA training, and turning a one-person Pinterest operation into a scalable business.", tags:["Team","SOPs","Scaling"], lime:["Advanced"], items:[
+    {h:"First Hire: Pin Designer", b:"Fiverr or Upwork. Brief: 'Create Pinterest pins in [style]. I provide: titles, descriptions, image direction. You deliver: 20 pins/batch in Canva. Rate: $5–15/pin.'"},
+    {h:"SOP: Pin Creation", b:"Document every step: keyword research → title creation → design brief → Canva design → description writing → Tailwind scheduling. Video record yourself once. That's the SOP."},
+    {h:"SOP: Analytics Review", b:"Weekly: pull top 20 pins by clicks. Note winners. Identify headline patterns. Create 5 variations of each winner. Kill underperformers. Schedule new batch. 45-minute process."},
+    {h:"Content Team Structure", b:"Freelance researcher (5 hrs/week) → AI-assisted writer (titles/descriptions, 3 hrs/week) → Canva designer (10 hrs/week) → You: strategy + optimization (3 hrs/week)."},
+    {h:"Revenue per Hour", b:"Properly systemized Pinterest business: 10 hrs/week management → $3,000–8,000/month revenue. That's $75–200/hour effective rate. Key: build the system before hiring."}
+  ]},
+  { num:"18", title:"Case Studies", desc:"Three detailed case studies: beginner account from zero, affiliate marketing success, and digital product launch — with real traffic and revenue breakdowns.", tags:["Case Studies","Real Examples","Proof"], lime:["Examples"], items:[
+    {h:"Case Study 1: Beginner Growth", b:"Account: personal finance for millennials. Month 1: 500 impressions/day. Month 3: 8,000/day. Month 6: 45,000/day. Strategy: 15 pins/day, 3 niche boards, consistent SEO."},
+    {h:"Case Study 2: Affiliate Income", b:"Niche: home office setup. 60,000 monthly views. Amazon + ShareASale affiliate links. Bridge pages for each product category. Result: $2,400/month affiliate income."},
+    {h:"Case Study 3: Digital Product", b:"Product: Notion budget template ($27). Pinterest drove 800 visitors/month to sales page. Conversion rate: 2.1%. Revenue: $453/month from one $27 product. Passive."},
+    {h:"Failure Case Study", b:"Account suspended for direct affiliate linking (no bridge page). Rebuilt in 45 days. New account followed compliance rules. Reached original traffic in 3 months."},
+    {h:"Key Lessons", b:"Traffic takes 90 days to compound. First income comes at month 4–5 for most. Accounts that post consistently for 6 months rarely fail. Patience is the real strategy."}
+  ]},
+  { num:"19", title:"Mistakes & Failures", desc:"Complete mistake library: spam behaviors, bad SEO, poor design patterns, compliance errors, and the hidden reasons most Pinterest accounts fail.", tags:["Mistakes","Warning","Compliance"], lime:[], items:[
+    {h:"Mistake 1: Niche Hopping", b:"Pinning about 10 different topics confuses Pinterest's distribution algorithm. Pick one niche, build topical authority, then expand. Scattered accounts get scattered results."},
+    {h:"Mistake 2: Direct Affiliate Links", b:"Pinterest flags accounts that repeatedly link directly to Amazon or affiliate offers without a landing page. Use bridge pages. Compliance protects your account."},
+    {h:"Mistake 3: Buying Followers", b:"Fake followers suppress your engagement rate. Pinterest sees low engagement ÷ high follower count = poor quality signal. Algorithm reduces your distribution permanently."},
+    {h:"Mistake 4: Poor Pin Quality", b:"Blurry images, small text, no clear value proposition = low saves = low distribution. Every pin is a permanent advertisement. Make each one good enough to last 3 years."},
+    {h:"Mistake 5: Inconsistency", b:"Posting 100 pins in week 1 then nothing for 3 weeks = algorithm confusion. Slow and steady (10/day consistently) outperforms burst posting every single time."}
+  ]},
+  { num:"20", title:"Full Business Blueprint", desc:"The complete operating system: niche → SEO → content → automation → monetization → scaling → team → passive income. Everything connected.", tags:["Blueprint","Complete System","Masterclass"], lime:["Final Module"], items:[
+    {h:"Phase 1 — Foundation (Days 1–30)", b:"Pick niche. Set up account. Research 200 keywords. Create 10 boards. Design 5 pin templates. Create first 50 pins. Schedule 15/day. Build the base."},
+    {h:"Phase 2 — Content Engine (Days 31–90)", b:"AI-assisted batch creation. 20+ pins/day. Test 3 pin designs per concept. Identify first winners. Launch first lead magnet. Set up email sequence."},
+    {h:"Phase 3 — Monetization (Days 91–180)", b:"First affiliate income. Launch first digital product. Email list hitting 500+ subscribers. Blog getting 5,000–20,000 monthly pageviews. First $500–2,000 month."},
+    {h:"Phase 4 — Automation (Days 181–365)", b:"Hire first VA. Create SOPs. AI handles 80% of content creation. You handle strategy. Revenue: $2,000–8,000/month. Working 5–10 hrs/week."},
+    {h:"Phase 5 — Empire (Year 2+)", b:"Multi-account expansion. 3+ income streams active. Email list: 5,000+. Monthly revenue: $5,000–20,000. Fully automated. True passive income system."}
+  ]}
+];
+
+const incomeModels = [
+  { icon:"📌", name:"Affiliate Marketing", range:"$500–5K/mo", note:"Promote others' products. Low setup, high margin. Best: SaaS + digital products." },
+  { icon:"📘", name:"Digital Products", range:"$300–8K/mo", note:"Ebooks, templates, printables. 100% margin. Create once, sell forever.", featured:true },
+  { icon:"📝", name:"Blog + Ad Revenue", range:"$200–3K/mo", note:"Pinterest → blog → Google AdSense/Mediavine. Requires 25K+ monthly sessions." },
+  { icon:"📧", name:"Email Marketing", range:"$400–6K/mo", note:"Build list via Pinterest. Promote products via automated sequences." },
+  { icon:"🛒", name:"E-commerce Traffic", range:"$500–10K/mo", note:"Drive Pinterest traffic to your Shopify/Etsy store. High buyer intent audience." },
+  { icon:"💼", name:"CPA & Lead Gen", range:"$300–4K/mo", note:"Get paid per lead or action. Finance, insurance, education niches pay most." }
+];
+
+const timeline = [
+  { month:"Month 1", event:"Account setup, first 300 pins created, profile optimized", active:true },
+  { month:"Month 2", event:"Daily posting begins, first 10K impressions/month", active:true },
+  { month:"Month 3", event:"50K impressions, first affiliate clicks", active:true },
+  { month:"Month 4", event:"First affiliate commission ($50–300)", active:false },
+  { month:"Month 5", event:"5,000+ email subscribers, product launch", active:false },
+  { month:"Month 6", event:"First $1,000+ month. Scaling begins.", active:false },
+  { month:"Month 12", event:"$3,000–10,000/month. Semi-automated.", active:false }
+];
+
+const toolkit = [
+  { group:"Design Tools", items:[
+    { name:"Canva Pro", purpose:"Pin design", badge:"paid" },
+    { name:"Adobe Express", purpose:"Quick graphics", badge:"free" },
+    { name:"Unsplash", purpose:"Free stock photos", badge:"free" },
+    { name:"Pexels", purpose:"Stock video/photos", badge:"free" }
+  ]},
+  { group:"Scheduling", items:[
+    { name:"Tailwind", purpose:"Pinterest scheduler", badge:"paid" },
+    { name:"Buffer", purpose:"Multi-platform", badge:"paid" },
+    { name:"Pinterest native", purpose:"Direct scheduling", badge:"free" }
+  ]},
+  { group:"AI & Content", items:[
+    { name:"ChatGPT-4o", purpose:"Titles, descriptions", badge:"free" },
+    { name:"Claude", purpose:"Long-form content", badge:"free" },
+    { name:"Midjourney", purpose:"AI images for pins", badge:"paid" },
+    { name:"Jasper", purpose:"Marketing copy", badge:"paid" }
+  ]},
+  { group:"Monetization", items:[
+    { name:"Gumroad", purpose:"Sell digital products", badge:"free" },
+    { name:"Payhip", purpose:"Digital downloads", badge:"free" },
+    { name:"ConvertKit", purpose:"Email marketing", badge:"paid" },
+    { name:"ShareASale", purpose:"Affiliate network", badge:"free" }
+  ]},
+  { group:"SEO & Research", items:[
+    { name:"Pinterest Trends", purpose:"Trend research", badge:"free" },
+    { name:"Ubersuggest", purpose:"Keyword data", badge:"free" },
+    { name:"SimilarWeb", purpose:"Competitor analysis", badge:"free" },
+    { name:"Ahrefs", purpose:"Advanced SEO", badge:"paid" }
+  ]},
+  { group:"Analytics", items:[
+    { name:"Pinterest Analytics", purpose:"Native insights", badge:"free" },
+    { name:"Google Analytics 4", purpose:"Traffic tracking", badge:"free" },
+    { name:"Hotjar", purpose:"Landing page behavior", badge:"free" }
+  ]}
+];
+
+const phases = [
+  { num:"01", title:"Foundation — Week 1", time:"Days 1–7", items:[
+    "Create Pinterest business account with keyword-rich username",
+    "Write SEO-optimized bio with primary keyword + CTA",
+    "Create 10–15 boards with keyword-rich board names",
+    "Write board descriptions with 3–5 keywords each",
+    "Enable Rich Pins via domain verification",
+    "Connect Pinterest Analytics + Google Analytics",
+    "Research 200 target keywords using Pinterest autocomplete",
+    "Identify top 3 competitors and reverse-engineer their top pins"
+  ]},
+  { num:"02", title:"Content — Week 2–3", time:"Days 8–21", items:[
+    "Design 5 pin templates in Canva (2:3 ratio, mobile-first)",
+    "Create first batch of 50 pins using AI-assisted workflow",
+    "Write keyword-optimized descriptions for all 50 pins",
+    "Schedule first 2 weeks of pins in Tailwind",
+    "Create first lead magnet (checklist or cheatsheet)",
+    "Set up landing page + ConvertKit email form",
+    "Write 5-email welcome sequence",
+    "Post first 10 pins manually to test platform"
+  ]},
+  { num:"03", title:"Monetization — Week 4–8", time:"Days 22–56", items:[
+    "Sign up for 3 affiliate programs in your niche",
+    "Create bridge page for primary affiliate offer",
+    "Create affiliate pin linking to bridge page (with disclosure)",
+    "Validate digital product idea with 10 test pins",
+    "Create first digital product (ebook/template/printable)",
+    "Set up Gumroad or Payhip product page",
+    "Launch product with 5 dedicated pins",
+    "Review analytics: identify top 10% of pins by clicks"
+  ]},
+  { num:"04", title:"Scale — Month 3+", time:"Days 57–90", items:[
+    "Scale to 20+ pins per day",
+    "Create 5 variations of every top-performing pin",
+    "Set up AI batch creation workflow (Sunday pipeline)",
+    "Kill or revamp all pins below 0.3% CTR",
+    "Reach 100+ email subscribers milestone",
+    "Make first affiliate sale or digital product sale",
+    "Write first monthly analytics report",
+    "Begin planning VA hire if spending 20+ hrs/week"
+  ]}
+];
+
+// Render modules
+const grid = document.getElementById('modulesGrid');
+modules.forEach((m, i) => {
+  const card = document.createElement('div');
+  card.className = 'mod-card';
+  card.innerHTML = `
+    <div class="mod-num">MODULE ${m.num}</div>
+    <div class="mod-title">${m.title}</div>
+    <div class="mod-desc">${m.desc}</div>
+    <div class="mod-tags">${m.tags.map(t => `<span class="mod-tag${m.lime.includes(t)?'':''}">${t}</span>`).join('')}${m.lime.map(l=>`<span class="mod-tag lime">${l}</span>`).join('')}</div>
+    <div class="mod-expand">
+      ${m.items.map(it=>`<div class="expand-item"><div class="expand-dot"></div><div><strong>${it.h}:</strong> ${it.b}</div></div>`).join('')}
+    </div>
+  `;
+  card.addEventListener('click', () => {
+    const wasExpanded = card.classList.contains('expanded');
+    document.querySelectorAll('.mod-card.expanded').forEach(c => c.classList.remove('expanded'));
+    if (!wasExpanded) card.classList.add('expanded');
+  });
+  grid.appendChild(card);
+});
+
+// Render income
+const ig = document.getElementById('incomeGrid');
+incomeModels.forEach(m => {
+  const c = document.createElement('div');
+  c.className = 'income-card' + (m.featured ? ' featured' : '');
+  c.innerHTML = `<span class="income-icon">${m.icon}</span><div class="income-name">${m.name}</div><div class="income-range">${m.range}</div><div class="income-note">${m.note}</div>`;
+  ig.appendChild(c);
+});
+
+// Render timeline
+const tl = document.getElementById('tlTrack');
+timeline.forEach(t => {
+  const item = document.createElement('div');
+  item.className = 'tl-item' + (t.active ? ' active' : '');
+  item.innerHTML = `<div class="tl-dot"></div><div class="tl-month">${t.month}</div><div class="tl-event">${t.event}</div>`;
+  tl.appendChild(item);
+});
+
+// Render toolkit
+const tg = document.getElementById('toolsGrid');
+toolkit.forEach(group => {
+  const g = document.createElement('div');
+  g.className = 'tool-group';
+  g.innerHTML = `<div class="tool-group-title">${group.group}</div>` +
+    group.items.map(t => `<div class="tool-item"><span class="tool-name">${t.name}</span><div style="display:flex;align-items:center;gap:8px"><span class="tool-purpose">${t.purpose}</span><span class="tool-badge ${t.badge}">${t.badge}</span></div></div>`).join('');
+  tg.appendChild(g);
+});
+
+// Render checklist
+const pg = document.getElementById('phaseGrid');
+phases.forEach(phase => {
+  const block = document.createElement('div');
+  block.className = 'phase-block';
+  const checkItems = phase.items.map((item, i) => `
+    <div class="check-item" onclick="toggleCheck(this, '${phase.num}')">
+      <div class="check-box"></div>
+      <span class="check-label">${item}</span>
+    </div>
+  `).join('');
+  block.innerHTML = `
+    <div class="phase-header">
+      <div class="phase-num">0${phase.num}</div>
+      <div class="phase-title-txt">${phase.title}</div>
+      <div class="phase-time">${phase.time}</div>
+    </div>
+    <div class="check-list">${checkItems}</div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:0%" id="prog-${phase.num}"></div></div>
+      <div class="progress-label" id="prog-label-${phase.num}">0 / ${phase.items.length} completed</div>
+    </div>
+  `;
+  pg.appendChild(block);
+});
+
+function toggleCheck(el, phaseNum) {
+  el.classList.toggle('done');
+  const block = el.closest('.phase-block');
+  const all = block.querySelectorAll('.check-item');
+  const done = block.querySelectorAll('.check-item.done');
+  const pct = Math.round((done.length / all.length) * 100);
+  document.getElementById('prog-'+phaseNum).style.width = pct + '%';
+  document.getElementById('prog-label-'+phaseNum).textContent = `${done.length} / ${all.length} completed`;
+}
+
+function showSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>
